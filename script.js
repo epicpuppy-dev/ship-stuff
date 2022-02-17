@@ -108,10 +108,10 @@ function Main() {
             projectiles[p].draw();
         }
     }
-    if (player.x > 820) player.x += 840;
-    else if (player.x < -20) player.x -= 840;
-    if (player.y > 620) player.y -= 640;
-    else if (player.y < -20) player.y += 640;
+    if (player.x > 820) player.x = -20;
+    else if (player.x < -20) player.x = 820;
+    if (player.y > 620) player.y = -20;
+    else if (player.y < -20) player.y = 620;
     if (player.accelerate) delta = getXY(player.direction, player.speed);
     else delta = [0, 0];
     player.vx += delta[0];
