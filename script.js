@@ -11,11 +11,14 @@ player.accelerate = false;
 player.rotspeed = 2.5;
 player.speed = 0.1;
 player.weapon = {};
-player.weapon.rate = 2;
+player.weapon.rate = 20;
 player.weapon.speed = 5;
+player.weapon.cooldown = 0;
+player.weapon.fire = false;
 turning.left = false;
 turning.right = false;
 player.direction = 0;
+projectiles = [];
 /*
 0: x= y-
 1-89: x+ y-
@@ -27,13 +30,27 @@ player.direction = 0;
 271-359: x- y+
 */
 class projectile {
-    constructor (xv, yv, x, y) {
+    constructor (v, x, y, direction, d) {
         this.x = x;
         this.y = y;
-        this.xv = xv;
-        this.yv = yv;
+        this.xv = v[0];
+        this.yv = v[1];
+        this.direction = direction;
+        this.xd = d[0];
+        this.yd = d[1];
     }
-    
+    tick () {
+        this.x += this.xv;
+        this.y += this.yv;
+        if (this.x > 820 || this.x < -20 || this.y > 620 || this.y < -20) return true;
+    }
+    draw () {
+        const path = new Path2D();
+        path.moveTo(this.x, this.y);
+        path.lineTo(this.x + this.xd, this.y + this.yd);
+        ctx.strokeStyle = 'black';
+        ctx.stroke(path);
+    }
 }
 function toRadians (angle) {
   return angle * (Math.PI / 180);
@@ -78,10 +95,23 @@ function Main() {
     } else if (player.direction < 0) {
         player.direction += 360;
     }
-    if (player.x > 820) player.x = -20;
-    else if (player.x < -20) player.x = 820;
-    if (player.y > 620) player.y = -20;
-    else if (player.y < -20) player.y = 620;
+    if (player.weapon.cooldown <= 0 && player.weapon.fire) {
+        projectiles.push(new projectile(getXY(player.direction, player.weapon.speed), player.x + 10, player.y + 10, player.direction, getXY(player.direction, 8)));
+        player.weapon.cooldown = 1 / player.weapon.rate * 50;
+    }
+    for (p=0; p<projectiles.length; p++) {
+        out = projectiles[p].tick();
+        if (out) {
+            projectiles = projectiles.slice(0, p).concat(projectiles.slice(p+1));
+            p--;
+        } else {
+            projectiles[p].draw();
+        }
+    }
+    if (player.x > 820) player.x += 840;
+    else if (player.x < -20) player.x -= 840;
+    if (player.y > 620) player.y -= 640;
+    else if (player.y < -20) player.y += 640;
     if (player.accelerate) delta = getXY(player.direction, player.speed);
     else delta = [0, 0];
     player.vx += delta[0];
@@ -93,15 +123,25 @@ function Main() {
     player.x += player.vx;
     player.y += player.vy;
     DrawPlayer();
+    player.weapon.cooldown--;
+}
+function Update() {
+    player.speed = parseFloat(document.getElementById('speed').value);
+    player.rotspeed = parseFloat(document.getElementById('rotspeed').value);
+    player.weapon.rate = parseFloat(document.getElementById('firerate').value);
+    player.weapon.speed = parseFloat(document.getElementById('firespeed').value);
+    player.scoef = parseFloat(document.getElementById('scoef').value);
 }
 document.addEventListener('keydown', function (event) {
     if (event.code == 'ArrowRight') turning.right = true;
     if (event.code == 'ArrowLeft') turning.left = true;
     if (event.code == 'ArrowUp') player.accelerate = true;
+    if (event.code == 'Space') player.weapon.fire = true;
 });
 document.addEventListener('keyup', function (event) {
     if (event.code == 'ArrowRight') turning.right = false;
     if (event.code == 'ArrowLeft') turning.left = false;
     if (event.code == 'ArrowUp') player.accelerate = false;
+    if (event.code == 'Space') player.weapon.fire = false;
 });
 setInterval(Main, 20);
