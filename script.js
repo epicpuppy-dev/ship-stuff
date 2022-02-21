@@ -1,6 +1,10 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const turning = {};
+const mouse = {};
+mouse.x = 0;
+mouse.y = 0;
+mouse.direction = 0;
 const player = {};
 player.x = 400;
 player.y = 300;
@@ -53,23 +57,32 @@ class projectile {
     }
 }
 function toRadians (angle) {
-  return angle * (Math.PI / 180);
+    return angle * (Math.PI / 180);
+}
+function toDegrees (angle) {
+    return angle * (180 / Math.PI);
 }
 function getXY(direction, amount) {
+    newdir = direction;
+    if (direction > 360) newdir -= 360;
+    if (direction < 0) newdir += 360;
+    out = [];
     switch (direction) {
         case 0:
-            return [0, -amount];
+            out = [0, -amount];
         case 90:
-            return [amount, 0];
+            out = [amount, 0];
         case 180:
-            return [0, amount];
+            out = [0, amount];
         case 270:
-            return [-amount, 0];
+            out = [-amount, 0];
     }
-    if (direction >= 1 && direction <= 89) return [(Math.sin(toRadians(direction))*amount), -(Math.cos(toRadians(direction))*amount)];
-    if (direction >= 91 && direction <= 179) return [(Math.sin(toRadians(180 - direction))*amount), (Math.cos(toRadians(180 - direction))*amount)];
-    if (direction >= 181 && direction <= 269) return [-(Math.sin(toRadians(direction - 180))*amount), (Math.cos(toRadians(direction - 180))*amount)];
-    if (direction >= 271 && direction <= 359) return [-(Math.sin(toRadians(360 - direction))*amount), -(Math.cos(toRadians(360 - direction))*amount)];
+    if (newdir > 0 && newdir < 90) out = [(Math.sin(toRadians(newdir))*amount), -(Math.cos(toRadians(newdir))*amount)];
+    if (newdir > 90 && newdir < 180) out = [(Math.sin(toRadians(180 - newdir))*amount), (Math.cos(toRadians(180 - newdir))*amount)];
+    if (newdir > 180 && newdir < 270) out = [-(Math.sin(toRadians(newdir - 180))*amount), (Math.cos(toRadians(newdir - 180))*amount)];
+    if (newdir > 270 && newdir < 360) out = [-(Math.sin(toRadians(360 - newdir))*amount), -(Math.cos(toRadians(360 - newdir))*amount)];
+    //console.log(out);
+    return out;
 }
 function DrawPlayer() {
     var path = new Path2D();
@@ -88,13 +101,7 @@ function DrawPlayer() {
 function Main() {
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, 800, 600);
-    if (turning.right) player.direction += player.rotspeed;
-    if (turning.left) player.direction -= player.rotspeed;
-    if (player.direction >= 360) {
-        player.direction -= 360;
-    } else if (player.direction < 0) {
-        player.direction += 360;
-    }
+    Turn();
     if (player.weapon.cooldown <= 0 && player.weapon.fire) {
         projectiles.push(new projectile(getXY(player.direction, player.weapon.speed), player.x + 10, player.y + 10, player.direction, getXY(player.direction, 8)));
         player.weapon.cooldown = 1 / player.weapon.rate * 50;
@@ -125,23 +132,50 @@ function Main() {
     DrawPlayer();
     player.weapon.cooldown--;
 }
+function Turn() {
+    mouse.direction = toDegrees(Math.atan2(mouse.y - player.y, mouse.x - player.x)) + 90;
+    //get direction relative to player direction
+    directionDiff = Math.round(mouse.direction - player.direction);
+    if (directionDiff > 180) directionDiff -= 360;
+    else if (directionDiff < -180) directionDiff += 360;
+    if (directionDiff < 0) turning.left = true;
+    else turning.left = false;
+    if (directionDiff > 0) turning.right = true;
+    else turning.right = false;
+    if (Math.abs(directionDiff) < player.rotspeed) {
+        player.direction = mouse.direction;
+    } else {
+        if (turning.right) player.direction += player.rotspeed;
+        if (turning.left) player.direction -= player.rotspeed;
+        if (player.direction >= 360) {
+            player.direction -= 360;
+        } else if (player.direction < 0) {
+            player.direction += 360;
+        }
+    }
+}
 function Update() {
     player.speed = parseFloat(document.getElementById('speed').value);
-    player.rotspeed = parseFloat(document.getElementById('rotspeed').value);
+    player.rotspeed = parseFloat((document.getElementById('rotspeed').value / 50).toFixed(2));
     player.weapon.rate = parseFloat(document.getElementById('firerate').value);
     player.weapon.speed = parseFloat(document.getElementById('firespeed').value);
     player.scoef = parseFloat(document.getElementById('scoef').value);
 }
 document.addEventListener('keydown', function (event) {
-    if (event.code == 'ArrowRight') turning.right = true;
-    if (event.code == 'ArrowLeft') turning.left = true;
-    if (event.code == 'ArrowUp') player.accelerate = true;
-    if (event.code == 'Space') player.weapon.fire = true;
+    if (event.code == 'Space') player.accelerate = true;
 });
 document.addEventListener('keyup', function (event) {
-    if (event.code == 'ArrowRight') turning.right = false;
-    if (event.code == 'ArrowLeft') turning.left = false;
-    if (event.code == 'ArrowUp') player.accelerate = false;
-    if (event.code == 'Space') player.weapon.fire = false;
+    if (event.code == 'Space') player.accelerate = false;
+});
+document.addEventListener('mousedown', function (event) {
+    player.weapon.fire = true;
+});
+document.addEventListener('mouseup', function (event) {
+    player.weapon.fire = false;
+});
+//mouse x and y positions
+document.addEventListener('mousemove', function (event) {
+    mouse.x = event.clientX - canvas.offsetLeft;
+    mouse.y = event.clientY - canvas.offsetTop;
 });
 setInterval(Main, 20);
