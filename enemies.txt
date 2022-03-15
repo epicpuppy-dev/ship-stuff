@@ -1,0 +1,10 @@
+-- ENEMIES & OBSTACLES -- [NAME] <HP> {DMG} [[BOSS]] //DONE
+// [ASTEROID] - Floats around in a single direction - <2 + 1 * difficulty> {2 + 1 * difficulty}
+// [DRIFTER] - Randomly travels around the map - <5 + 1.5 * difficulty> {5 + 1 * difficulty}
+// [FIGHTER] - Follows the player around - <5 + 2 * difficulty> {5 + 1.5 * difficulty}
+   [SHOOTER] - Picks a spot and shoots the player - <10 + 2 * difficulty> {2 + 1 * difficulty}
+   [SPEEDER] - Dashes around the map - <2 + 1 * difficulty> {5 + 1 * difficulty}
+   [[DEMOLITIONIST]] - Creates mines around the map - <25 + 5 * difficulty> {25 + 12 * difficulty}
+     [MINE] - Stays still in one place - <5 + 1 * difficulty> {5 + 2 * difficulty}
+   [[CARRIER]] - Builds interceptors to attack the player - <30 + 5 * difficulty> {25 + 12 * difficulty}
+     [INTERCEPTOR] - Follows the player around - <2 + 0.5 * difficulty> {2 + 1 * difficulty}
