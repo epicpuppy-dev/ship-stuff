@@ -1,3 +1,85 @@
+//INITIALIZE AUDIO
+var audio = {};
+audio.shoot = {};
+audio.shoot.current = 0;
+audio.shoot.amount = 8;
+audio.shoot.sounds = [];
+for (var a = 0; a < audio.shoot.amount; a++) {
+    sound = new Audio('audio/shoot.wav');
+    sound.volume = 0.2;
+    audio.shoot.sounds.push(sound);
+}
+audio.shoot.play = function () {
+    audio.shoot.sounds[audio.shoot.current].play();
+    audio.shoot.current++;
+    if (audio.shoot.current >= audio.shoot.amount - 1) audio.shoot.current = 0;
+}
+
+audio.destroy = {};
+audio.destroy.current = 0;
+audio.destroy.amount = 4;
+audio.destroy.sounds = [];
+for (var a = 0; a < audio.destroy.amount; a++) {
+    sound = new Audio('audio/destroy.wav');
+    sound.volume = 0.5;
+    audio.destroy.sounds.push(sound);
+}
+audio.destroy.play = function () {
+    audio.destroy.sounds[audio.destroy.current].play();
+    audio.destroy.current++;
+    if (audio.destroy.current >= audio.destroy.amount - 1) audio.destroy.current = 0;
+}
+
+audio.hurt = {};
+audio.hurt.current = 0;
+audio.hurt.amount = 3;
+audio.hurt.sounds = [];
+for (var a = 0; a < audio.hurt.amount; a++) {
+    sound = new Audio('audio/hurt.wav');
+    sound.volume = 0.5;
+    audio.hurt.sounds.push(sound);
+}
+audio.hurt.play = function () {
+    audio.hurt.sounds[audio.hurt.current].play();
+    audio.hurt.current++;
+    if (audio.hurt.current >= audio.hurt.amount - 1) audio.hurt.current = 0;
+}
+
+audio.blast = {};
+audio.blast.current = 0;
+audio.blast.amount = 3;
+audio.blast.sounds = [];
+for (var a = 0; a < audio.blast.amount; a++) {
+    sound = new Audio('audio/blast.wav');
+    sound.volume = 0.8;
+    audio.blast.sounds.push(sound);
+}
+audio.blast.play = function () {
+    audio.blast.sounds[audio.blast.current].play();
+    audio.blast.current++;
+    if (audio.blast.current >= audio.blast.amount - 1) audio.blast.current = 0;
+}
+
+audio.dash = {};
+audio.dash.current = 0;
+audio.dash.amount = 3;
+audio.dash.sounds = [];
+for (var a = 0; a < audio.dash.amount; a++) {
+    sound = new Audio('audio/dash.wav');
+    sound.volume = 0.8;
+    audio.dash.sounds.push(sound);
+}
+audio.dash.play = function () {
+    audio.dash.sounds[audio.dash.current].play();
+    audio.dash.current++;
+    if (audio.dash.current >= audio.dash.amount - 1) audio.dash.current = 0;
+}
+
+audio.shield = new Audio('audio/shield.wav');
+audio.freeze = new Audio('audio/on.wav');
+audio.off = new Audio('audio/off.wav');
+audio.level = new Audio('audio/level.wav');
+
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const turning = {};
@@ -229,6 +311,7 @@ function PlayerCollision() {
                 o--;
                 if (!abilities.shield.active) {
                     player.health -= difficulty + 2;
+                    audio.hurt.play();
                 }
                 if (player.health <= 0) scene = 'e';
             }
@@ -243,6 +326,7 @@ function PlayerCollision() {
             if (collision) {
                 if (!abilities.shield.active) {
                     player.health -= projectile.damage;
+                    audio.hurt.play();
                 }
                 enemyProjectiles.splice(p, 1);
                 p--;
@@ -264,6 +348,7 @@ function TickAbilities() {
             abilities.shield.cooldown -= abilities.shield.reload / abilities.shield.duration;
             if (abilities.shield.cooldown <= 0) {
                 abilities.shield.active = false;
+                audio.off.play();
             }
         }
     }
@@ -273,6 +358,7 @@ function TickAbilities() {
             abilities.freeze.cooldown -= abilities.freeze.reload / abilities.freeze.duration;
             if (abilities.freeze.cooldown <= 0) {
                 abilities.freeze.active = false;
+                audio.off.play();
             }
         }
     }
@@ -306,6 +392,7 @@ function BuyItem(item) {
         }
     }
     shop.bought.push(item.id);
+    audio.level.play();
     player.levelup = false;
     player.xp = 0;
     player.level += 1;
@@ -371,6 +458,7 @@ function Main() {
                     player.x + 10, player.y + 10, player.direction, getXY(player.direction, 12))
             );
             player.weapon.cooldown = 0;
+            audio.shoot.play();
         }
         TickGame();
         player.weapon.cooldown++;
@@ -567,6 +655,7 @@ document.addEventListener('keydown', function (event) {
         player.vx += delta[0];
         player.vy += delta[1];
         abilities.dash.cooldown -= abilities.dash.reload;
+        audio.dash.play();
     }
     if (event.code == 'KeyX' && unlocks.abilities.burst && abilities.burst.cooldown >= abilities.burst.reload) {
         for (b = 0; b < abilities.burst.count; b++) {
@@ -581,12 +670,15 @@ document.addEventListener('keydown', function (event) {
             );
         }
         abilities.burst.cooldown -= abilities.burst.reload;
+        audio.blast.play();
     }
     if (event.code == 'KeyC' && unlocks.abilities.shield && abilities.shield.cooldown >= abilities.shield.reload) {
         abilities.shield.active = true;
+        audio.shield.play();
     }
     if (event.code == 'KeyV' && unlocks.abilities.freeze && abilities.freeze.cooldown >= abilities.freeze.reload) {
         abilities.freeze.active = true;
+        audio.freeze.play();
     }
 });
 document.addEventListener('keyup', function (event) {

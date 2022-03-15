@@ -125,7 +125,10 @@ class drifter extends enemy {
             var playercollide = collide.sat.poly([[-15, 15], [-12, -9], [0, -15], [12, -9], [15, 15]],
             [this.x, this.y], this.direction, [[10, 0], [20, 20], [0, 20]], [player.x, player.y], player.direction);
             if (playercollide) {
-                player.health -= this.damage;
+                if (!abilities.shield.active) {
+                    player.health -= this.damage;
+                    audio.hurt.play();
+                }
                 if (player.health <= 0) return 'e';
                 return true;
             }
@@ -140,6 +143,7 @@ class drifter extends enemy {
                     if (this.health <= 0) {
                         player.GainXP(3 + (difficulty));
                         player.GainScore(50 + 8 * difficulty);
+                        audio.destroy.play();
                         return true;
                     }
                 }
@@ -216,7 +220,10 @@ class fighter extends enemy {
             var playercollide = collide.sat.poly([[15, 15], [-15, 15], [0, -15]],
             [this.x, this.y], this.direction, [[10, 0], [20, 20], [0, 20]], [player.x, player.y], player.direction);
             if (playercollide) {
-                player.health -= this.damage;
+                if (!abilities.shield.active) {
+                    player.health -= this.damage;
+                    audio.hurt.play();
+                }
                 if (player.health <= 0) return 'e';
                 return true;
             }
@@ -230,6 +237,7 @@ class fighter extends enemy {
                     if (this.health <= 0) {
                         player.GainXP(4 + (1.5 * difficulty));
                         player.GainScore(65 + 10 * difficulty);
+                        audio.destroy.play();
                         return true;
                     }
                 }
@@ -314,7 +322,10 @@ class shooter extends enemy {
             var playercollide = collide.sat.poly([[15, 15], [-15, 15], [0, -15]],
             [this.x, this.y], this.direction, [[10, 0], [20, 20], [0, 20]], [player.x, player.y], player.direction);
             if (playercollide) {
-                player.health -= this.damage;
+                if (!abilities.shield.active) {
+                    player.health -= this.damage;
+                    audio.hurt.play();
+                }
                 if (player.health <= 0) return 'e';
                 return true;
             }
@@ -329,6 +340,7 @@ class shooter extends enemy {
                     if (this.health <= 0) {
                         player.GainXP(5 + (1.5 * difficulty));
                         player.GainScore(75 + 12 * difficulty);
+                        audio.destroy.play();
                         return true;
                     }
                 }
@@ -447,6 +459,7 @@ class asteroid {
                     if (this.health <= 0) {
                         player.GainXP(1 + (difficulty / 2));
                         player.GainScore(25 + 5 * difficulty);
+                        audio.destroy.play();
                         return true;
                     }
                 }
