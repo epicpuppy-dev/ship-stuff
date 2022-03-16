@@ -659,7 +659,7 @@ document.addEventListener('keydown', function (event) {
     }
     if (event.code == 'KeyX' && unlocks.abilities.burst && abilities.burst.cooldown >= abilities.burst.reload) {
         for (b = 0; b < abilities.burst.count; b++) {
-            var fireDirection = Math.floor(Math.random() * abilities.burst.radius * 2) - abilities.burst.radius;
+            var fireDirection = (Math.floor(Math.random() * abilities.burst.radius * 8) / 4) - abilities.burst.radius;
             fireDirection += player.direction;
             if (fireDirection > 360) fireDirection -= 360;
             if (fireDirection < 0) fireDirection += 360;

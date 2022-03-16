@@ -352,6 +352,7 @@ class shooter extends enemy {
                     getXY(this.direction, 4),
                     this.x, this.y, this.direction, getXY(this.direction, 12), this.damage)
             );
+            audio.shoot.play();
             this.cooldown = 100;
             }
         if (this.x > this.target[0] - 10 && this.x < this.target[0] + 10 && this.y > this.target[1] - 10 && this.y < this.target[1] + 10) {
