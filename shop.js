@@ -11,7 +11,7 @@ dg = damage
 shop
     //ENGINE UPGRADES
     .register(new item(
-        "engine", "Start Engine", ["Start up the engine systems", "- Gain the ability to move"]
+        "engine", "Start Engine", ["Start up the engine systems", "- Gain the ability to move", "Point your mouse in a direction", "and use [LEFT CLICK] to move"]
         , 0, [], function () {unlocks.move = true;}, {ac: [20, "a"], ms: [200, "a"], rs: [135, "a"]}
     ))
     .register(new item(
@@ -142,7 +142,7 @@ shop
     
     //PHASER UPGRADES
     .register(new item(
-        "laser", "Start Phaser", ["Start up the laser system", "- Gain the ability to shoot"]
+        "laser", "Start Phaser", ["Start up the laser system", "- Gain the ability to shoot", "Fire with [SPACE]"]
         , 1, ["engine"], function () {unlocks.weapon = true;}, {fr: [2, "a"], ls: [200, "a"]}
     ))
     .register(new item(
