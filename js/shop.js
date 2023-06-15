@@ -11,7 +11,7 @@ dg = damage
 shop
     //ENGINE UPGRADES
     .register(new item(
-        "engine", "Start Engine", ["Start up the engine systems", "- Gain the ability to move", "Point your mouse in a direction", "and use [LEFT CLICK] to move"]
+        "engine", "Start Engine", ["Start the engine systems", "- Gain the ability to move", "Point your mouse in a direction", "and use [LEFT CLICK] to move"]
         , 0, [], function () {unlocks.move = true;}, {ac: [20, "a"], ms: [200, "a"], rs: [135, "a"]}
     ))
     .register(new item(
@@ -29,23 +29,23 @@ shop
     
     //ABILITIES
     .register(new item(
-        "dash", "Dash Warp",
+        "dash", "Dash",
         ["Ability: [Z] Dash", "Gives an instant burst of speed", "- Base Cooldown: 6 seconds", "- Base Power: Velocity +180px/s"]
         , 5, ["engine"], function () {unlocks.abilities.dash = true;}, {ac: [1, "a"], ms: [15, "a"]}
     ))
     .register(new item(
-        "burst", "Burst Blast",
+        "burst", "Burst",
         ["Ability: [X] Burst", "Instantly fires many projectiles",
         "- Base Cooldown: 8 seconds", "- Base Amount: 20 projectiles", "- Base Radius: 40 degrees"]
         , 5, ["laser"], function () {unlocks.abilities.burst = true;}, {fr: [0.5, "a"], ls: [20, "a"], dg: [2, "a"]}
     ))
     .register(new item(
-        "shield", "Shield Core",
+        "shield", "Shield",
         ["Ability: [C] Shield", "Gives temporary damage immunity", "- Base Cooldown: 20 seconds", "- Base Duration: 2 seconds"]
         , 9, ["hull1"], function () {unlocks.abilities.shield = true;}, {hp: [20, "a"]}
     ))
     .register(new item(
-        "freeze", "Freeze Reactor",
+        "freeze", "Freeze",
         ["Ability: [V] Freeze", "Temporarily freezes all enemies", "- Base Cooldown: 20 seconds", "- Base Duration: 3 seconds"]
         , 9, ["hull1"], function () {unlocks.abilities.freeze = true;}, {}
     ))
